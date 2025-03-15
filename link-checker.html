@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Check if a link is safe to click with our Link Checker tool.">
+    <meta name="keywords" content="link checker, safe link, website safety, malware check, hacking detection">
+    <meta name="author" content="Your Name">
+    <title>Link Checker Tool</title>
+    <style>
+        /* General Styles */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        /* Header */
+        header {
+            background-color: #007BFF;
+            color: #fff;
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+
+        /* Main Content */
+        main {
+            padding: 20px;
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Form */
+        #link-checker-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        #link-checker-form label {
+            font-size: 1.1rem;
+            font-weight: bold;
+        }
+
+        #link-checker-form input[type="url"] {
+            padding: 10px;
+            font-size: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            outline: none;
+        }
+
+        #link-checker-form input[type="url"]:focus {
+            border-color: #007BFF;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        #link-checker-form button {
+            padding: 10px;
+            font-size: 1rem;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #link-checker-form button:hover {
+            background-color: #0056b3;
+        }
+
+        /* Result Section */
+        #result {
+            margin-top: 20px;
+            padding: 20px;
+            border-radius: 4px;
+            font-size: 1.1rem;
+            text-align: center;
+        }
+
+        .safe {
+            color: #28a745;
+            font-weight: bold;
+        }
+
+        .not-safe {
+            color: #dc3545;
+            font-weight: bold;
+        }
+
+        /* Advertisement Section */
+        #advertisement {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        /* Footer */
+        footer {
+            background-color: #007BFF;
+            color: #fff;
+            text-align: center;
+            padding: 10px 0;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            box-shadow: 0 -4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        footer p {
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 600px) {
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            main {
+                padding: 15px;
+                margin: 10px;
+            }
+
+            #link-checker-form input[type="url"] {
+                font-size: 0.9rem;
+            }
+
+            #link-checker-form button {
+                font-size: 0.9rem;
+            }
+
+            #result {
+                font-size: 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Link Checker Tool</h1>
+    </header>
+
+    <main>
+        <!-- Link Checker Form -->
+        <section id="link-checker">
+            <form id="link-checker-form">
+                <label for="url">Enter URL to check:</label>
+                <input type="url" id="url" name="url" placeholder="https://example.com" required>
+                <button type="submit">Check Link</button>
+            </form>
+            <div id="result"></div>
+        </section>
+
+        <!-- Advertisement Section -->
+        <section id="advertisement">
+            <!-- Google AdSense Ad Unit -->
+            <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX"
+                    crossorigin="anonymous"></script>
+            <!-- Ad Unit 1 -->
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+                 data-ad-slot="XXXXXXXXXX"
+                 data-ad-format="auto"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2023 Link Checker Tool. All rights reserved.</p>
+    </footer>
+
+    <script>
+        // Google Safe Browsing API Key
+        const API_KEY = 'AIzaSyBl4oI0554JnWBTWvwYeCKaD_nkSX84rLY';
+        const API_URL = `https://safebrowsing.googleapis.com/v4/threatMatches:find?key=${API_KEY}`;
+
+        // Handle form submission
+        document.getElementById('link-checker-form').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const url = document.getElementById('url').value;
+            checkLinkSafety(url);
+        });
+
+        // Function to check link safety using Google Safe Browsing API
+        function checkLinkSafety(url) {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = `<p>Checking ${url}...</p>`;
+
+            // Prepare the request payload
+            const requestBody = {
+                client: {
+                    clientId: "LinkCheckerTool",
+                    clientVersion: "1.0"
+                },
+                threatInfo: {
+                    threatTypes: [
+                        "MALWARE",               // Malicious software
+                        "SOCIAL_ENGINEERING",    // Phishing or deceptive sites
+                        "UNWANTED_SOFTWARE",     // Unwanted software
+                        "POTENTIALLY_HARMFUL_APPLICATION", // Potentially harmful apps
+                        "THREAT_TYPE_UNSPECIFIED" // Other unspecified threats
+                    ],
+                    platformTypes: ["ANY_PLATFORM"], // Check for all platforms
+                    threatEntryTypes: ["URL"],       // Check URLs
+                    threatEntries: [{ url }]         // URL to check
+                }
+            };
+
+            // Make the API call
+            fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.matches && data.matches.length > 0) {
+                    // URL is unsafe
+                    const threats = data.matches.map(match => match.threatType).join(', ');
+                    resultDiv.innerHTML = `
+                        <p class="not-safe">❌ Not Safe!</p>
+                        <p>This link may contain: <strong>${threats}</strong>.</p>
+                        <p>It could harm your device or steal your data.</p>
+                    `;
+                } else {
+                    // URL is safe
+                    resultDiv.innerHTML = `<p class="safe">✅ Safe to click!</p>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error checking URL:', error);
+                resultDiv.innerHTML = `<p class="not-safe">❌ Error checking URL. Please try again later.</p>`;
+            });
+        }
+    </script>
+</body>
+</html>
